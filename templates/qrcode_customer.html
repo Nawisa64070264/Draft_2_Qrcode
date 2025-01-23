@@ -2,6 +2,19 @@
 <html>
 <head>
     <title>สร้าง QR Code สำหรับ Customer</title>
+    <!--สำหรับ icon download-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        .download-icon {
+            font-size: 24px;
+            color: #087d16;
+            transition: color 0.3s ease;
+        }
+    
+        .download-icon:hover {
+            color: #065a12; /* สีเมื่อชี้เมาส์ */
+        }
+    </style>
 </head>
 <body>
     <h1>QR Code สำหรับ Customer</h1>
@@ -22,8 +35,8 @@
 
     </div>
     <form method="POST" action="/download_qrcode/customer">
-        <button type="submit">
-            <i class="fas fa-download"></i> Download QR Code
+        <button type="submit" style="background: none; border: none; cursor: pointer;">
+            <i class="fa-solid fa-download" style="font-size: 24px; color: #087d16;"></i> <!--สำหรับ icon download-->
         </button>
     </form>
     {% endif %}
