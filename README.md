@@ -9,71 +9,134 @@ This is a part of my thesis project. First time using flask that is framework of
 
 ### QR Code Design Specification for the Project  
 
-#### **1. Objective**  
-- Minimize database storage and retrieval operations.  
-- Maximize the utility of QR codes by embedding essential data directly into them, reducing server dependency.  
+Here's the English translation of the QR Code Specification:
 
----
+**QR Code Specification**
 
-#### **2. Data to Encode in QR Codes**  
-##### **Farmer's QR Code (Raw Milk Tank)**  
-- **Tank ID**: Unique identifier for the raw milk tank.  
-- **Production Date**: Date of milk collection.  
-- **Farmer ID**: Identifier for the farmer.  
-- **Destination Factory**: Factory ID or location.  
-- **Digital Signature**: To verify the integrity of the QR code data.  
+**1. Purpose**
 
-##### **Factory's QR Code (Product Lot)**  
-- **Product Lot ID**: Unique identifier for the lot.  
-- **Production Date**: Date of product creation.  
-- **Expiration Date**: Best before date.  
-- **Factory ID**: Identifier for the factory.  
-- **Ingredients (optional)**: Key ingredient metadata.  
-- **Digital Signature**: To ensure authenticity and prevent tampering.  
+Use QR Codes to record and track data within the organic milk product supply chain, reducing reliance on databases and server data retrieval.
 
-##### **Customer's QR Code (Product Information)**  
-- **Product Lot ID**: Links to the entire product journey.  
-- **Embedded History (Optional)**: Basic journey information (e.g., Farmer ID, Factory ID).  
-- **Consumer URL**: Link to a web page showing the detailed journey.  
+**2. Embedded Data**
 
----
+*   **Farmer QR Code**
 
-#### **3. QR Code Format**  
-- **Type**: QR Code (ISO/IEC 18004:2015).  
-- **Error Correction Level**: H (High) – Allows embedding a small logo while maintaining data integrity.  
-- **Version**:  
-  - Farmer QR Code: Version 3-5 (26x26 to 37x37 cells).  
-  - Factory QR Code: Version 5-10 (37x37 to 57x57 cells, depending on lot size).  
-  - Customer QR Code: Version 4-6 (33x33 to 41x41 cells).  
+    *   Tank ID: Raw milk tank ID (string)
+    *   Production Date: Production date (ISO 8601 format, e.g., 2025-01-20)
+    *   Farmer ID: Farmer ID (string)
+    *   Destination Factory: Destination factory ID (string)
+    *   Digital Signature: Digital signature to verify data authenticity (string)
+*   **Factory QR Code**
 
----
+    *   Lot ID: Product lot ID (string)
+    *   Production Date: Production date (ISO 8601 format)
+    *   Expiration Date: Expiration date (ISO 8601 format)
+    *   Factory ID: Factory ID (string)
+    *   Ingredients: Ingredient information (optional, list of strings)
+    *   Digital Signature: Digital signature to verify data authenticity (string)
+*   **Customer QR Code**
 
-#### **4. Embedded Data Optimization**  
-- Use **compressed formats** (e.g., Base64 or hexadecimal) to minimize QR code size.  
-- Use **hashing** or **shortened identifiers** for Tank ID, Product Lot ID, and other unique fields.  
-- Embed only **static and non-sensitive data**.  
+    *   Lot ID: Product lot ID (string)
+    *   Product Name: Product name (string)
+    *   URL: Link for more information (string, e.g., [https://example.com/product/LOT12345](https://example.com/product/LOT12345))
 
----
+**3. QR Code Format**
 
-#### **5. Additional Design Elements**  
-- **Logo Integration**: Place a small company logo in the center of the QR code.  
-- **Color Contrast**: Use high-contrast colors (e.g., black on white) for easy scanning.  
-- **Quiet Zone**: Maintain a minimum of 4 units of white space around the QR code.  
+*   Standard: QR Code (ISO/IEC 18004:2015)
+*   Version:
+    *   Farmer QR Code: Version 3-5 (26x26 to 37x37 cells)
+    *   Factory QR Code: Version 5-10 (37x37 to 57x57 cells)
+    *   Customer QR Code: Version 4-6 (33x33 to 41x41 cells)
+*   Error Correction Level: Level H (High), supports logo insertion and protects against data corruption.
+*   Encoding: UTF-8
 
----
+**4. Example JSON Data Embedded in QR Code**
 
-#### **6. Security Features**  
-- **Digital Signatures**: Verify that data hasn’t been tampered with.  
-- **Data Encryption**: Encrypt sensitive data (e.g., Farmer ID) using public-key cryptography.  
-- **Anti-Counterfeiting Measures**: Embed invisible watermarks or use a unique design pattern.  
+*   **Farmer QR Code**
 
----
+    ```json
+    {
+      "tank_id": "TANK12345",
+      "production_date": "2025-01-20",
+      "farmer_id": "FARM67890",
+      "destination_factory": "FACTORY123",
+      "signature": "a1b2c3d4e5f6"
+    }
+    ```
 
-#### **7. Testing and Validation**  
-- Test QR codes on multiple devices and under various conditions (e.g., lighting, angles).  
-- Verify data consistency and journey reconstruction from scanned codes.  
+*   **Factory QR Code**
 
-Would you like specific examples of QR code data encoding for each actor?
+    ```json
+    {
+      "lot_id": "LOT98765",
+      "production_date": "2025-01-20",
+      "expiration_date": "2025-06-20",
+      "factory_id": "FACTORY123",
+      "ingredients": ["raw_milk"],
+      "signature": "z9y8x7w6v5u4"
+    }
+    ```
+
+*   **Customer QR Code**
+
+    ```json
+    {
+      "lot_id": "LOT98765",
+      "product_name": "Organic Milk",
+      "url": "https://example.com/product/LOT12345"
+    }
+    ```
+
+**5. Front-End Requirements**
+
+*   **QR Code Display:**
+    *   Use Base64 encoded images (sent from the Back-End).
+    *   Minimum display size: 200x200 pixels.
+*   **Data Entry Forms:**
+    *   Design forms to support fields according to each actor's data.
+    *   Perform client-side validation before submitting data.
+
+**6. Back-End Requirements**
+
+*   **QR Code Generation:**
+    *   Use libraries such as `qrcode` in Python.
+    *   Support converting JSON to QR Code and returning it as Base64.
+*   **Security:**
+    *   Use digital signatures or encryption to prevent data forgery.
+    *   Validate received data before processing.
+
+**7. QR Code Testing**
+
+Test scanning with various devices such as mobile phones and QR Code readers. Test under different lighting conditions and distances.
+
+**8. Deployment**
+
+Use in conjunction with a Blockchain system to store frequently changing data (Dynamic Data). Use an API server to provide QR Code creation and verification services.
+
+**9. Information Displayed Upon User Scanning QR Code**
+
+*   **Farmer:**
+    *   Factory Name
+    *   Address
+    *   Production Date
+    *   Certification File
+*   **Factory:**
+    *   Factory Name
+    *   Address
+    *   Pick up date
+    *   Product Lot
+    *   Certification
+    *   Shipping Date
+*   **Retailer:**
+    *   Company Name
+    *   Address
+    *   Quality
+*   **Logistic (Storage Information):**
+    *   Company Name
+    *   Sender's Name
+    *   Temperature
+    *   Quality Check
+
 
 # Step to install:
 Command Promt:
